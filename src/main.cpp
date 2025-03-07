@@ -10,8 +10,6 @@
 #include <SPIFFS.h>
 #include "websocket.h"
 
-
-
 void setup()
 {
     Serial.begin(115200);
@@ -43,18 +41,18 @@ void setup()
     Serial.println("DEBUG: Configurando WiFi...");
     setupWiFi();
     Serial.println("✅ WiFi configurado.");
-     // Inicializar sensores
-     Serial.println("DEBUG: Configurando Sensores...");
-     setupUltrasonic();
-     setupPressure();
-     setupFlow();
+    // Inicializar sensores
+    Serial.println("DEBUG: Configurando Sensores...");
+    setupUltrasonic();
+    setupPressure();
+    setupFlow();
  
-     beginTaskFlow();
-     beginTaskPressure();
-     beginTaskUltrasonic();
-     Serial.println("✅ Sensores configurados.");
+    beginTaskFlow();
+    beginTaskPressure();
+    beginTaskUltrasonic();
+    Serial.println("✅ Sensores configurados.");
 
-     delay(1000);
+    delay(1000);
 
     // Configurar WebSocket
     Serial.println("DEBUG: Configurando WebSocket...");
@@ -79,14 +77,10 @@ void setup()
     Serial.println("DEBUG: Iniciando servidor web...");
     server.begin();
     Serial.println("✅ Servidor web iniciado.");
-
     // Iniciar MQTT
     Serial.println("DEBUG: Iniciando MQTT...");
     beginMQTT();
     Serial.println("✅ MQTT configurado.");
-
-   
-
     Serial.println("🎯 Setup finalizado. Iniciando loop...");
 }
 
@@ -94,10 +88,8 @@ void setup()
 void loop()
 {
     Serial.println("🔄 Ejecutando loop...");
-    client.loop();  // muy importante mantener conexión MQTT
-
-    ws.cleanupClients();  // Mantiene la conexión WebSocket activa
-    broadcastSensorValues(); // Envía datos de sensores
-
+    client.loop(); 
+    ws.cleanupClients();  
+    broadcastSensorValues(); 
     delay(2000);
 }

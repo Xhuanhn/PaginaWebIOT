@@ -6,7 +6,7 @@ String mqtt_password;
 String mqtt_root_topic;
 bool mqtt_enabled;
 
-AsyncWebServer server(80);   // Definition of server
+AsyncWebServer server(80);   
 AsyncWebSocket ws("/ws");
 
 Preferences preferences;
@@ -26,7 +26,7 @@ void checkWiFiStatus(AsyncWebSocketClient *client)
     }
     String responseStr;
     serializeJson(response, responseStr);
-    client->text(responseStr); // Enviar la respuesta al cliente WebSocket
+    client->text(responseStr); 
 }
 
 void sendFullConfig(AsyncWebSocketClient *client)
@@ -91,6 +91,6 @@ void setupWiFi()
     {
         Serial.println("Conexión WiFi establecida en modo Estación");
         Serial.print("Dirección IP obtenida: ");
-        Serial.println(WiFi.localIP()); // Imprime la dirección IP en la consola   
+        Serial.println(WiFi.localIP());   
     }
 }

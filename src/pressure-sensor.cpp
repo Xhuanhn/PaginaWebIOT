@@ -31,7 +31,7 @@ void readPressureTask(void *parameter) {
         char message[50];
         formatSensorMessage("Presión", presion, "bar", message, sizeof(message));
 
-        vTaskDelay((1500 + (esp_random() % 500)) / portTICK_PERIOD_MS); // Delay aleatorio
+        vTaskDelay((1500 + (esp_random() % 500)) / portTICK_PERIOD_MS);
         publishMQTT(mqtt_topic, message);
     }
 }

@@ -14,7 +14,6 @@
 <body>
     <main class="container">
         <div class="sensor-section">
-            <!-- Sensor de Flujo -->
             <div class="sensor-group">
                 <label for="flow" class="label-group">Flujo (L/min)</label>
                 <input type="text" id="flow" readonly>
@@ -28,7 +27,6 @@
                 </div>
             </div>
 
-            <!-- Sensor de Presión -->
             <div class="sensor-group">
                 <label for="pressure" class="label-group">Presión (bar)</label>
                 <input type="text" id="pressure" readonly>
@@ -42,7 +40,6 @@
                 </div>
             </div>
 
-            <!-- Sensor Ultrasónico -->
             <div class="sensor-group">
                 <label for="ultrasonic" class="label-group">Distancia (cm)</label>
                 <input type="text" id="ultrasonic" readonly>
@@ -71,14 +68,12 @@
         
         <div class="command-section">
             <div class="input-group">
-                <!-- Botón para enviar el comando get_config -->
                 <button class="btn" id="send-get-config">Obtener Configuración</button>
             </div>
         </div>
 
         <div class="config-section">
             <h2>Configuración</h2>
-            <!-- Sección WiFi -->
             <div class="wifi-config">
                 <h3>Configuración WiFi</h3>
                 <div class="input-group">
@@ -90,11 +85,9 @@
                     <input type="password" id="wifi-password" placeholder="Contraseña de la red WiFi">
                 </div>
                 <button class="btn" id="save-wifi-config">Guardar Configuración WiFi</button>
-                <!-- Label para el aviso de WiFi -->
                 <label id="wifi-confirmation" class="confirmation-label"></label>
             </div>
 
-            <!-- Sección AP -->
             <div class="ap-config">
                 <h3>Configuración AP</h3>
                 <div class="input-group">
@@ -106,11 +99,9 @@
                     <input type="password" id="ap-password" placeholder="Contraseña del punto de acceso">
                 </div>
                 <button class="btn" id="save-ap-config">Guardar Configuración AP</button>
-                <!-- Label para el aviso de AP -->
                 <label id="ap-confirmation" class="confirmation-label"></label>
             </div>
 
-            <!-- Sección MQTT -->
             <div class="mqtt-config">
                 <h3>Configuración MQTT</h3>
                 <div class="input-group">
@@ -122,7 +113,6 @@
                     <input type="text" id="mqtt-root-topic" placeholder="Tema raíz MQTT">
                 </div>
                 <button class="btn" id="save-mqtt-config">Guardar Configuración MQTT</button>
-                <!-- Label para el aviso de MQTT -->
                 <label id="mqtt-confirmation" class="confirmation-label"></label>
             </div>
         </div>
@@ -139,7 +129,6 @@
             ws.onopen = function () {
                 console.log('✅ Conectado al WebSocket');
     
-                // Enviar comandos para obtener sensores y configuración MQTT
                 ws.send(JSON.stringify({ command: "get_sensors" }));
                 ws.send(JSON.stringify({ command: "get_config" }));
             };
@@ -148,13 +137,12 @@
                 const data = JSON.parse(event.data);
                 console.log("📩 Datos recibidos:", data);
     
-                // 🔹 Si se recibe la configuración MQTT, llenar automáticamente los campos de credenciales
                 if (data.status === "success" && data.mqtt) {
                     document.getElementById("username").value = data.mqtt.mqttUser || "";
                     document.getElementById("password").value = data.mqtt.mqttPassword || "";
                 }
     
-                // 🔹 Procesar datos de sensores
+                // Procesar datos de sensores
                 if (data.sensors) {
                     if (typeof data.sensors.flow !== "undefined") {
                         document.getElementById('flow').value = parseFloat(data.sensors.flow).toFixed(2);
@@ -167,7 +155,7 @@
                     }
                 }
     
-                // 🔹 Procesar nombre, función y métrica de sensores
+                // Procesar nombre, función y métrica de sensores
                 if (Array.isArray(data)) {
                     data.forEach(sensor => {
                         switch (sensor.id) {
@@ -190,7 +178,7 @@
                     });
                 }
     
-                // 🔹 Procesar configuración de WiFi, AP y MQTT
+                // Procesar configuración de WiFi, AP y MQTT
                 if (data.status === "success" && data.wifi) {
                     document.getElementById("wifi-ssid").value = data.wifi.ssid || "";
                     document.getElementById("wifi-password").value = data.wifi.password || "";
@@ -211,7 +199,7 @@
                 console.error("❌ Error en WebSocket:", error);
             };
     
-            // 🔹 Botón para obtener configuración
+            // Botón para obtener configuración
             document.getElementById('send-get-config').addEventListener('click', function () {
                 if (ws.readyState === WebSocket.OPEN) {
                     ws.send(JSON.stringify({ command: "get_config" }));
@@ -221,7 +209,7 @@
                 }
             });
     
-            // 🔹 Guardar configuración WiFi
+            // Guardar configuración WiFi
             document.getElementById('save-wifi-config').addEventListener('click', function () {
                 const wifiSsid = document.getElementById('wifi-ssid').value;
                 const wifiPassword = document.getElementById('wifi-password').value;
@@ -242,7 +230,7 @@
                 }
             });
     
-            // 🔹 Guardar configuración AP
+            // Guardar configuración AP
             document.getElementById('save-ap-config').addEventListener('click', function () {
                 const apSsid = document.getElementById('ap-ssid').value;
                 const apPassword = document.getElementById('ap-password').value;
@@ -263,7 +251,7 @@
                 }
             });
     
-            // 🔹 Guardar configuración MQTT
+            // Guardar configuración MQTT
             document.getElementById('save-mqtt-config').addEventListener('click', function () {
                 const mqttBroker = document.getElementById('mqtt-broker').value;
                 const mqttRootTopic = document.getElementById('mqtt-root-topic').value;
@@ -284,7 +272,7 @@
                 }
             });
     
-            // 🔹 Actualizar credenciales MQTT y redirigir a login.html
+            // Actualizar credenciales MQTT y redirigir a login.html
             document.getElementById("update-credentials").addEventListener("click", function () {
                 const username = document.getElementById("username").value.trim();
                 const password = document.getElementById("password").value.trim();
@@ -299,7 +287,7 @@
                     console.log("📨 Credenciales MQTT actualizadas:", credentialsMessage);
     
                     setTimeout(() => {
-                        window.location.href = '/login.html'; // Redirige después de actualizar credenciales
+                        window.location.href = '/login.html'; 
                     }, 2000);
                 }
             });

@@ -23,17 +23,6 @@ void conectMQTT()
         return;
     }
     
-    /*
-    Serial.print("Esperando clientes en Wi-Fi AP...");
-    while (WiFi.softAPgetStationNum() == 0)
-    { // Espera hasta que un dispositivo se conecte
-        Serial.print(".");
-        delay(1000);
-    }
-    */
-
-    
-
     Serial.print("Conectando a MQTT...");
     client.setServer(mqtt_broker.c_str(), 1883);
     delay(2000);
@@ -100,7 +89,7 @@ void beginMQTT()
 
     client.setServer(mqtt_broker.c_str(), 1883);
 
-    for (int i = 0; i < 5; i++) // Reintentar máximo 5 veces
+    for (int i = 0; i < 5; i++) 
     {
         if (client.connect("ESP32_Client"))
         {
@@ -126,6 +115,6 @@ void publishMQTT(const char *topic, const char *mensaje)
         }
         Serial.println("here");
         client.publish(topic, mensaje);
-        xSemaphoreGive(mqttMutex); // Libera el mutex
+        xSemaphoreGive(mqttMutex); 
     }
 }

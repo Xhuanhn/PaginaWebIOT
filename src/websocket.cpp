@@ -12,7 +12,7 @@ void sendResponse(AsyncWebSocketClient *client, const String &status, const Stri
     response["message"] = message;
     String responseStr;
     serializeJson(response, responseStr);
-    client->text(responseStr); // Enviar la respuesta al cliente WebSocket
+    client->text(responseStr); 
 }
 
 void broadcastSensorValues() {
@@ -26,8 +26,8 @@ void broadcastSensorValues() {
     String json;
     serializeJson(doc, json);
 
-    Serial.println("Enviando datos WebSocket: " + json); // Debug en la consola serie
-    ws.textAll(json);  // Enviar datos a todos los clientes WebSocket conectados
+    Serial.println("Enviando datos WebSocket: " + json); 
+    ws.textAll(json);  
 }
 
 
@@ -35,7 +35,7 @@ void sendJson(AsyncWebSocketClient *client, JsonDocument doc)
 {
     String responseStr;
     serializeJson(doc, responseStr);
-    client->text(responseStr); // Enviar la respuesta al cliente WebSocket
+    client->text(responseStr); 
 }
 
 void setConfig(bool mqttUpdated, JsonObject config, AsyncWebSocketClient *client)

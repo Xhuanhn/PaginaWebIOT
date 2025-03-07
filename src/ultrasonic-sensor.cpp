@@ -19,7 +19,7 @@ int readUltrasonic() {
     digitalWrite(TRIG_PIN, LOW);
 
     long duracion = pulseIn(ECHO_PIN, HIGH);
-    return duracion * 0.034 / 2;  // Devuelve la distancia en cm
+    return duracion * 0.034 / 2;  
 }
 
 void formatSensorMessageInt(const char *label, int value, const char *unit, char *buffer, int bufferSize) {
@@ -37,7 +37,7 @@ void readUltrasonicTask(void *parameter) {
         char message[50];
         formatSensorMessageInt("Distancia", distancia, "cm", message, sizeof(message));
 
-        vTaskDelay((1500 + (esp_random() % 500)) / portTICK_PERIOD_MS); // Delay aleatorio
+        vTaskDelay((1500 + (esp_random() % 500)) / portTICK_PERIOD_MS); 
         publishMQTT(mqtt_topic, message);
     }
 }
