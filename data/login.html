@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesion</title>
+    <link rel="stylesheet" href="/css/design.css">
+</head>
+<body>
+    <div class="login">
+        <form class="form" id="loginForm">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Iniciar Sesion</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').onsubmit = function(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const ws = new WebSocket('ws://' + window.location.host + '/ws');
+
+            ws.onopen = function() {
+                ws.send(JSON.stringify({
+                    command: 'get_config'
+                }));
+            };
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.status === 'success') {
+                    const mqttUser = data.mqtt.mqttUser;
+                    const mqttPassword = data.mqtt.mqttPassword;
+
+                    if (username === mqttUser && password === mqttPassword) {
+                        window.location.href = '/index.html'; // Redirige a index.html si las credenciales son correctas
+                    } else {
+                        alert('Usuario o contraseña incorrectos');
+                    }
+                }
+                ws.close();
+            };
+
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+                alert('Error de conexión con el servidor');
+            };
+        };
+    </script>
+</body>
+</html>

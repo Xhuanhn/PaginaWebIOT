@@ -1,0 +1,14 @@
+{
+    "command": "set_config",
+    "value": {
+        "ssid": "No configurado",
+        "password": "No configurado",
+        "ap_ssid": "ESP1",
+        "ap_password": "12345678",
+        "mqttBroker": "192.168.4.10",
+        "mqttUser": "",
+        "mqttPassword": "",
+        "mqttRootTopic": "/",
+        "mqttEnabled": true
+    }
+}
