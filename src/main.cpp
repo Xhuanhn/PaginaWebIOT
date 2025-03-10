@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <esp_system.h>
-#include "config.h"
+#include <esp_task_wdt.h>  // 📌 Librería para el Watchdog
+#include "config.h"  // Contiene setupWiFi()
 #include "websocket.h"
 #include "identification-module.h"
 #include "flow-sensor.h"
@@ -10,10 +11,22 @@
 #include <SPIFFS.h>
 #include "websocket.h"
 
+<<<<<<< HEAD
+=======
+#define RESET_BUTTON_PIN 14  // GPIO del botón de reset
+#define RESET_HOLD_TIME 10000  // 10 segundos
+
+>>>>>>> c060d86997b17095fd3662753ffe17582034cbc2
 void setup()
 {
     Serial.begin(115200);
     Serial.println("🚀 Iniciando ESP32...");
+
+    pinMode(RESET_BUTTON_PIN, INPUT_PULLUP);
+
+    // 📌 Inicializar Watchdog Timer (WDT)
+    esp_task_wdt_init(5, true);  // Tiempo máximo de bloqueo: 5s
+    esp_task_wdt_add(NULL);  // Monitorear la tarea principal (loopTask)
 
     // Inicializar preferencias
     preferences.begin("config", false);
@@ -46,12 +59,21 @@ void setup()
     setupUltrasonic();
     setupPressure();
     setupFlow();
+<<<<<<< HEAD
  
     beginTaskFlow();
     beginTaskPressure();
     beginTaskUltrasonic();
     Serial.println("✅ Sensores configurados.");
 
+=======
+
+    beginTaskFlow();
+    beginTaskPressure();
+    beginTaskUltrasonic();
+    Serial.println("✅ Sensores configurados.");
+
+>>>>>>> c060d86997b17095fd3662753ffe17582034cbc2
     delay(1000);
 
     // Configurar WebSocket
@@ -81,6 +103,12 @@ void setup()
     Serial.println("DEBUG: Iniciando MQTT...");
     beginMQTT();
     Serial.println("✅ MQTT configurado.");
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> c060d86997b17095fd3662753ffe17582034cbc2
     Serial.println("🎯 Setup finalizado. Iniciando loop...");
 }
 
@@ -88,8 +116,53 @@ void setup()
 void loop()
 {
     Serial.println("🔄 Ejecutando loop...");
+<<<<<<< HEAD
     client.loop(); 
     ws.cleanupClients();  
     broadcastSensorValues(); 
+=======
+    
+    // 📌 Resetear el Watchdog Timer para evitar reinicio inesperado
+    esp_task_wdt_reset();
+
+    // ✅ Detectar si el botón de reset ha sido presionado por 10 segundos
+    unsigned long buttonPressStart = 0;
+    bool buttonHeld = false;
+
+    if (digitalRead(RESET_BUTTON_PIN) == LOW) {
+        buttonPressStart = millis();
+        Serial.println("🟠 Botón de reset presionado, esperando 10s...");
+        
+        while (digitalRead(RESET_BUTTON_PIN) == LOW) {  
+            if (millis() - buttonPressStart >= RESET_HOLD_TIME) {
+                Serial.println("🛑 Botón de reset presionado por 10s! Restableciendo WiFi...");
+                buttonHeld = true;
+                break;
+            }
+            esp_task_wdt_reset();
+            delay(100);  // Pequeña pausa para evitar lectura errónea
+        }
+
+        if (buttonHeld) {
+            Serial.println("⚠️ Borrando preferencias de WiFi...");
+            preferences.begin("config", false);
+            preferences.clear();
+            preferences.end();
+            Serial.println("✅ Preferencias eliminadas.");
+
+            Serial.println("♻️ Reiniciando WiFi...");
+            setupWiFi(); 
+        } else {
+            Serial.println("🔵 Botón soltado antes de 10s, cancelando reset.");
+        }
+    }
+
+    client.loop();  // Mantiene conexión MQTT
+    ws.cleanupClients();  // Mantiene WebSocket activo
+    broadcastSensorValues();  // Envía datos de sensores
+
+    esp_task_wdt_reset();
+    
+>>>>>>> c060d86997b17095fd3662753ffe17582034cbc2
     delay(2000);
 }
